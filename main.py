@@ -77,6 +77,11 @@ class LexemeFinderApp(tk.Tk):
         self.title("Lexeme Finder")
         self.geometry("400x500")
 
+        self.input_label = ttk.Label(self, text="Поиск лексемы где гласные не могут стоять рядом")
+        self.input_label.pack(anchor="n")
+        self.input_label = ttk.Label(self, text="с наибольшим числом согласных на нечетных местах")
+        self.input_label.pack(anchor="n")
+
 
         self.input_label = ttk.Label(self, text="Введите слово (по умолчанию 'институт')")
         self.input_label.pack(anchor="n", pady= 8)
