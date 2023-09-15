@@ -13,12 +13,13 @@
 
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 
 
 class LexemeFinder:
     def __init__(self, s):
         self.s = s
-        self.vowels = set('аеёиоуыэюяАЕЁИОУЫЭЮЯ aeiouAEIOU')
+        self.vowels = set('аеёиоуыэюяАЕЁИОУЫЭЮЯaeiouAEIOU')
         self.max_consonants = -1
         self.max_lexemes = []
 
@@ -75,33 +76,36 @@ class LexemeFinderApp(tk.Tk):
 
 
         self.title("Lexeme Finder")
-        self.geometry("400x500")
+        self.geometry("550x550")
 
-        self.input_label = ttk.Label(self, text="Поиск лексемы где гласные не могут стоять рядом")
+        self.input_label = ttk.Label(self, text="Поиск лексем с наибольшим числом согласных на нечетных местах",font='Arial 12')
         self.input_label.pack(anchor="n")
-        self.input_label = ttk.Label(self, text="с наибольшим числом согласных на нечетных местах")
+        self.input_label = ttk.Label(self, text="Так же в лексемах гласные не могут стоять рядом", font='Arial 12')
         self.input_label.pack(anchor="n")
 
 
-        self.input_label = ttk.Label(self, text="Введите слово (по умолчанию 'институт')")
+        self.input_label = ttk.Label(self, text="Введите слово (по умолчанию 'институт')", font='Arial 12')
         self.input_label.pack(anchor="n", pady= 8)
 
         self.default_text = tk.StringVar(value="институт")
 
-        self.input_text = ttk.Entry(self, textvariable=self.default_text)
-        self.input_text.pack(anchor="n", padx=8,)
+        self.input_text = ttk.Entry(self, textvariable=self.default_text, font='Arial 12')
+        self.input_text.pack(anchor="n", padx=8,ipadx=50)
 
-        self.submit_button = ttk.Button(self, text="Найти лексемы", command=self.submit)
+        style = ttk.Style()
+        style.configure("my.TButton", font=("Arial", 12))
+
+        self.submit_button = ttk.Button(self, text="Найти лексемы", command=self.submit, style="my.TButton")
         self.submit_button.pack(anchor='n', padx=8, pady= 8)
 
-        self.output_label = ttk.Label(self, text="Результат:")
-        self.output_label.pack(anchor='n', padx=8,)
+        self.result_label = ttk.Label(self)
+        self.result_label.pack(anchor='n', padx=8)
 
         self.text_frame = tk.Frame(self)
         self.text_frame.pack(anchor='n', padx=8, pady=8)
 
         self.scrollbar = ttk.Scrollbar(self.text_frame)
-        self.output_text = tk.Text(self.text_frame, wrap=tk.WORD, width=40, height=40,yscrollcommand=self.scrollbar.set)
+        self.output_text = tk.Text(self.text_frame, width=50, height=40,yscrollcommand=self.scrollbar.set, font='Arial 12')
         self.scrollbar.config(command=self.output_text.yview)
 
         self.output_text.pack(side=tk.LEFT, padx=0, pady=0)
@@ -110,17 +114,20 @@ class LexemeFinderApp(tk.Tk):
 
     def submit(self):
         s = self.input_text.get()
+        if not s.isalpha():
+            tk.messagebox.showwarning("Предупреждение", "Пожалуйста, введите корректное слово, состоящее из букв")
+            return
         finder = LexemeFinder(s)
         lexemes = finder.lexico_permute_string()
 
         self.output_text.delete(1.0, tk.END)
 
-        if finder.max_consonants == 0:
-            self.output_text.insert(tk.END, "Лексем с согласными на нечетных местах не существует")
+        if not lexemes or (len(s) == 1 and finder.is_vowel(s)):
+            self.result_label.config(text="Лексем с согласными на нечетных местах не существует", font='Arial 12')
         else:
-            self.output_text.insert(tk.END, "Лексемы с наибольшим числом согласных на нечетных местах:")
+            self.result_label.config(text="Лексемы с наибольшим числом согласных на нечетных местах:", font='Arial 12')
             for i, lexeme in enumerate(lexemes, start=1):
-                self.output_text.insert(tk.END, f"\n{i}. {lexeme}")
+                self.output_text.insert(tk.END, f"{i}. {lexeme}\n")
 
 
 if __name__ == "__main__":
