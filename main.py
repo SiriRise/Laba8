@@ -112,17 +112,29 @@ class LexemeFinderApp(tk.Tk):
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y, padx=0, pady=0)
 
 
+
     def submit(self):
         s = self.input_text.get()
         if not s.isalpha():
             tk.messagebox.showwarning("Предупреждение", "Пожалуйста, введите корректное слово, состоящее из букв")
             return
+        self.output_text.delete(1.0, tk.END)
+        self.result_label.config(text="Выполняется...", font='Arial 12')
+        self.update()
+
         finder = LexemeFinder(s)
         lexemes = finder.lexico_permute_string()
 
         self.output_text.delete(1.0, tk.END)
 
-        if not lexemes or (len(s) == 1 and finder.is_vowel(s)):
+        found = False
+        for lexeme in lexemes:
+            if finder.count_odd_positioned_consonants(
+                    lexeme) != 0:
+                found = True
+                break
+
+        if not found:
             self.result_label.config(text="Лексем с согласными на нечетных местах не существует", font='Arial 12')
         else:
             self.result_label.config(text="Лексемы с наибольшим числом согласных на нечетных местах:", font='Arial 12')
