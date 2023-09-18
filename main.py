@@ -80,7 +80,7 @@ class LexemeFinderApp(tk.Tk):
 
         self.input_label = ttk.Label(self, text="Поиск лексем с наибольшим числом согласных на нечетных местах",font='Arial 12')
         self.input_label.pack(anchor="n")
-        self.input_label = ttk.Label(self, text="Так же в лексемах гласные не могут стоять рядом", font='Arial 12')
+        self.input_label = ttk.Label(self, text="Также в лексемах гласные не могут стоять рядом", font='Arial 12')
         self.input_label.pack(anchor="n")
 
 
